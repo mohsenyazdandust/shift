@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 
 from main.forms import SignUpForm
+from main.models import File
 
 
 class LogInView(LoginView):
@@ -60,3 +61,21 @@ class SignedView(TemplateView):
 def logout(request):
     auth_logout(request)
     return HttpResponseRedirect("/")
+
+
+class FilesView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'next'
+
+    model = File
+    fields = ['file', ]
+    
+    template_name = 'main/files.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('main:files') 
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, 'فایل با موفقیت ارسال شد!')
+        return super().form_valid(form)

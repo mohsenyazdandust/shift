@@ -1,0 +1,61 @@
+{% extends "base/layout.html" %}
+
+{% load static %}
+
+{% block Content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">ارسال فایل جدید</span>
+    </h4>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    {% for message in messages %}
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                    {% endfor %}
+                    <form method="POST" action="" enctype='multipart/form-data'>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="mb-3 col-md-6 form-password-toggle">
+                                <div class="mb-3">
+                                    <label for="file" class="form-label">فایل PDF را انتخاب کنید</label>
+                                    <input required class="form-control" type="file" id="file" name="file" accept=".pdf">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <button type="submit" class="btn btn-primary me-2">ارسال فایل</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <h5 class="card-header">فایل های قبلی</h5>
+                <div class="table-responsive text-nowrap">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>لینک دانلود</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                            {% for file in user.file_set.all %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><a href="{{ file.file.url }}"><span class="badge bg-label-primary me-1">برای دانلود کلیک کنید</span></a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock Content %}

@@ -19,6 +19,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_confirmed', True)
         
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
@@ -28,7 +29,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    
     username = None
     phone_number = models.CharField(max_length=13, blank=True, unique=True)
     
@@ -50,3 +50,14 @@ class User(AbstractUser):
     
     def get_full_name(self):
         return '{} {}'.format(self.first_name, self.last_name)
+    
+
+class File(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='files/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
+class BankInfo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
