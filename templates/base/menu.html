@@ -1,0 +1,46 @@
+{% load static %}
+
+<!-- Menu -->
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <div class="app-brand demo mb-4">
+        <a href="#" class="app-brand-link">
+            <span class="app-brand-logo demo">
+            <img src="{% get_static_prefix %}img/logo.png">
+            
+        </span>
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">اُنرس</span>
+        </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large mr-auto d-block d-xl-none">
+            <i class="bx bx-chevron-right bx-sm align-middle"></i>
+        </a>
+    </div>
+    <div class="menu-inner-shadow"></div>
+    <ul class="menu-inner py-1">
+        <!-- Dashboard -->
+        <li class="menu-item">
+            <a href="{% url 'main:profile' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-user-circle"></i>
+                <div>پروفایل</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{% url 'main:profile' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-money-withdraw"></i>
+                <div>شماره حساب</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{% url 'main:profile' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-mail-send"></i>
+                <div>ارسال فایل</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{% url 'main:profile' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-calendar"></i>
+                <div>شیفت بندی</div>
+            </a>
+        </li>
+    </ul>
+</aside>
+<!-- / Menu -->

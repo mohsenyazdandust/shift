@@ -1,0 +1,183 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" class="light-style  customizer-hide" dir="ltr" data-theme="theme-default" data-assets-path="{% get_static_prefix %}"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>ثبت نام | اُنرس</title>
+    <meta name="description"
+        content="پنل پرسنل اُنرس" />
+    <!-- Canonical SEO -->
+    <link rel="canonical" href="#">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% get_static_prefix %}img/favicon/favicon.ico" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="{% get_static_prefix %}vendor/fonts/boxicons.css" />
+    <link href='{% get_static_prefix %}css/boxicons.min.css' rel='stylesheet'>
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{% get_static_prefix %}vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="{% get_static_prefix %}vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{% get_static_prefix %}css/demo.css" />
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{% get_static_prefix %}vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <!-- Page CSS -->
+    <!-- Page -->
+    <link rel="stylesheet" href="{% get_static_prefix %}vendor/css/pages/page-auth.css">
+    <!-- Helpers -->
+    <script src="{% get_static_prefix %}vendor/js/helpers.js"></script>
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="{% get_static_prefix %}js/config.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    <!-- Custom notification for demo -->
+    <!-- beautify ignore:end -->
+</head>
+
+<body dir="rtl">
+    <!-- Content -->
+    <div class="container-xxl">
+        <div class="authentication-wrapper authentication-basic container-p-y">
+            <div class="authentication-inner">
+
+                <!-- Register Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Logo -->
+                        <div class="app-brand justify-content-center">
+                            <a href="#" class="app-brand-link gap-2">
+                                <span class="app-brand-logo demo">
+                                    <img src="{% get_static_prefix %}img/logo.png">
+                                </span>
+                                <span class="app-brand-text demo text-body fw-bolder">اُنرس</span>
+                            </a>
+                        </div>
+                        <!-- /Logo -->
+                        <h4 class="mb-2">ثبت نام در پنل پرسنل اُنرس</h4>
+                        {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                        {% endfor %}
+                        <form id="formAuthentication" class="mb-3" action="" method="POST" enctype='multipart/form-data'>
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="first_name" class="form-label">نام</label>
+                                <input required type="text" class="form-control" id="first_name" name="first_name"
+                                    placeholder="نام خود را وارد کنید" autofocus>
+                            </div>
+                            <div class="mb-3">
+                                <label for="last_name" class="form-label">نام خانوادگی</label>
+                                <input required type="text" class="form-control" id="last_name" name="last_name"
+                                    placeholder="نام خانوادگی خود را وارد کنید" autofocus>
+                            </div>
+                            <label for="phone_number" class="form-label">شماره همراه (با هر شماره فقط یکبار ثبت نام)</label>
+                            <div class="input-group mb-1">
+                                <input required dir="ltr" type="text" class="form-control" placeholder="09*********" id="phone_number" name="phone_number">
+                                <button class="btn btn-outline-primary" type="button" id="button-addon2">ارسال کد تایید</button>
+                            </div>
+                            <div class="mb-3">
+                                <label for="code" class="form-label">کد تایید</label>
+                                <input required type="text" class="form-control" id="code" name="code"
+                                    placeholder="کد تایید 4 رقمی را وارد کنید" autofocus>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_card" class="form-label">عکس صفحه اول شناسنامه</label>
+                                <input required class="form-control" type="file" id="id_card" name="id_card" accept="image/*">
+                            </div>
+                            <div class="mb-3">
+                                <label for="degree" class="form-label">عکس اصل آخرین مدرک تحصیلی</label>
+                                <input required class="form-control" type="file" id="degree" name="degree" accept="image/*">
+                            </div>
+                            <div class="mb-3">
+                                <label for="auth" class="form-label">تصویر سلفی به همراه نامه احراز هویت</label>
+                                <input required class="form-control" type="file" id="auth" name="auth" accept="image/*">
+                                <a href="#" class="text-warning d-block my-2">دانلود فایل نامه حقوقی</a>
+                                <a href="#" class="text-warning d-block">دانلود تصویر نهایی نمونه</a>
+                            </div>
+                            <div class="mb-3 form-password-toggle">
+                                <label class="form-label" for="password1">رمز عبور</label>
+                                <div class="input-group input-group-merge">
+                                    <input required type="password" id="password1" class="form-control" name="password1"
+                                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                        aria-describedby="password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 form-password-toggle">
+                                <label class="form-label" for="password2">تکرار رمز عبور</label>
+                                <div class="input-group input-group-merge">
+                                    <input required type="password" id="password2" class="form-control" name="password2"
+                                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                        aria-describedby="password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input required class="form-check-input" type="checkbox" id="terms-conditions" name="terms">
+                                    <label class="form-check-label" for="terms-conditions">
+                                        موافقم
+                                        <a href="javascript:void(0);">سیاست حفظ حریم خصوصی و شرایط</a>
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary d-grid w-100" type='submit'>
+                                ثبت نام
+                            </button>
+                        </form>
+
+                        <p class="text-center">
+                            <span>از قبل حساب کاربری دارید؟</span>
+                            <a href="{% url 'main:login' %}">
+                                <span>در عوض وارد سیستم شوید</span>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <!-- Register Card -->
+            </div>
+        </div>
+    </div>
+
+    <!-- / Content -->
+    <!-- Core JS -->
+    <!-- build:js {% get_static_prefix %}vendor/js/core.js -->
+    <script src="{% get_static_prefix %}vendor/libs/jquery/jquery.js"></script>
+    <script src="{% get_static_prefix %}vendor/libs/popper/popper.js"></script>
+    <script src="{% get_static_prefix %}vendor/js/bootstrap.js"></script>
+    <script src="{% get_static_prefix %}vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="{% get_static_prefix %}vendor/js/menu.js"></script>
+    <!-- endbuild -->
+    <!-- Vendors JS -->
+    <!-- Main JS -->
+    <script src="{% get_static_prefix %}js/main.js"></script>
+    <!-- Page JS -->
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script src="{% get_static_prefix %}vendor/js/buttons.js"></script>
+</body>
+
+</html>
