@@ -1,9 +1,6 @@
 from django.db import models
-from django.db.models import F
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-
-from django.core.exceptions import ValidationError
 
 
 class UserManager(BaseUserManager):
@@ -56,6 +53,9 @@ class File(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(upload_to='files/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-uploaded_at', ]
 
 
 class BankInfo(models.Model):
