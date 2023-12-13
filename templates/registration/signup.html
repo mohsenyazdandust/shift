@@ -94,12 +94,12 @@
                             <label for="phone_number" class="form-label">شماره همراه (با هر شماره فقط یکبار ثبت نام)</label>
                             <div class="input-group mb-1">
                                 <input required dir="ltr" type="text" class="form-control" placeholder="09*********" id="phone_number" name="phone_number">
-                                <button class="btn btn-outline-primary" type="button" id="button-addon2">ارسال کد تایید</button>
+                                <button class="btn btn-outline-primary" type="button" id="send-sms">ارسال کد تایید</button>
                             </div>
                             <div class="mb-3">
                                 <label for="code" class="form-label">کد تایید</label>
                                 <input required type="text" class="form-control" id="code" name="code"
-                                    placeholder="کد تایید 4 رقمی را وارد کنید" autofocus>
+                                    placeholder="کد تایید 4 رقمی را وارد کنید" autofocus disabled>
                             </div>
                             <div class="mb-3">
                                 <label for="id_card" class="form-label">عکس صفحه اول شناسنامه</label>
@@ -112,8 +112,8 @@
                             <div class="mb-3">
                                 <label for="auth" class="form-label">تصویر سلفی به همراه نامه احراز هویت</label>
                                 <input required class="form-control" type="file" id="auth" name="auth" accept="image/*">
-                                <a href="#" class="text-warning d-block my-2">دانلود فایل نامه حقوقی</a>
-                                <a href="#" class="text-warning d-block">دانلود تصویر نهایی نمونه</a>
+                                <a href="#" class="text-warning d-block my-2" download>دانلود فایل نامه حقوقی</a>
+                                <a href="#" class="text-warning d-block" download>دانلود تصویر نهایی نمونه</a>
                             </div>
                             <div class="mb-3 form-password-toggle">
                                 <label class="form-label" for="password1">رمز عبور</label>
@@ -175,6 +175,7 @@
     <!-- Main JS -->
     <script src="{% get_static_prefix %}js/main.js"></script>
     <!-- Page JS -->
+    <script src="{% get_static_prefix %}js/signup.js"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script src="{% get_static_prefix %}vendor/js/buttons.js"></script>

@@ -1,4 +1,8 @@
+import secrets
+from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect, redirect
+
+from django.views.decorators.csrf import csrf_exempt
 
 from django.views.generic import CreateView, TemplateView, UpdateView
 
@@ -12,7 +16,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 
 from main.forms import SignUpForm
-from main.models import BankInfo, File, User
+from main.models import BankInfo, Code, File, User
 
 
 class LogInView(LoginView):
@@ -45,6 +49,7 @@ class SignUpView(CreateView):
     
     def form_invalid(self, form):
         messages.error(self.request, 'دوباره فیلد هایی که وارد کردید را بررسی کنید!')
+        messages.error(self.request, form.errors)
         return self.render_to_response(self.get_context_data(form=form))
 
 
@@ -124,3 +129,25 @@ def change_password(request):
             messages.error(request, 'تغییر رمز دچار مشکل شد، لطفا مجدد تلاش کنید!')
 
     return redirect('main:profile')
+
+
+@csrf_exempt
+def send_code(request):
+    if request.method == 'POST':
+        data = request.POST
+        phone_number = data.get("phone_number", None)
+        if phone_number and len(phone_number) == 11:
+            # code = secrets.choice(range(1000, 9999))
+            code = 1234
+            
+            # To-Do: SEND CODE VIA SMS
+            Code.objects.create(
+                phone_number=phone_number,
+                code=str(code)
+            )
+            return HttpResponse("Done!", status=200)
+        else:
+            return HttpResponse("Wrong Phone Number!", status=400)
+
+    else:
+        return HttpResponse("Not Valid!", status=403)

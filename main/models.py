@@ -61,3 +61,8 @@ class File(models.Model):
 class BankInfo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     sheba = models.CharField(max_length=100)
+
+
+class Code(models.Model):
+    code = models.CharField(max_length=4)
+    phone_number = models.CharField(max_length=11)

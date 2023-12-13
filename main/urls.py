@@ -11,5 +11,6 @@ urlpatterns = [
     path('files/', FilesView.as_view(), name="files"),
     path('bankinfo/', BankInfoView.as_view(), name="bankinfo"),
     path('password/', change_password, name="change_password"),
+    path('sendcode/', send_code, name="sendcode"),
     path('', ProfileView.as_view(), name="profile"),
 ]
