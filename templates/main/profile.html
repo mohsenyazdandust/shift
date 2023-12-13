@@ -13,15 +13,30 @@
                 <!-- Account -->
                 <hr class="my-0">
                 <div class="card-body">
-                    <form id="formAccountSettings" method="POST" action="">
+                    {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                        <div class="alert alert-danger alert-dismissible" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                            </button>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    <form id="formAccountSettings" method="POST" action="" enctype='multipart/form-data'>
                         {% csrf_token %}
                         <div class="d-flex align-items-start align-items-sm-center gap-4 mb-4">
-                            <img src="{% get_static_prefix %}img/avatars/1.png" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                            <img src="{{ user.profile_picture.url }}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
                             <div class="button-wrapper">
                                 <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
                                 <span class="d-none d-sm-block">آپلود تصویر جدید</span>
                                 <i class="bx bx-upload d-block d-sm-none"></i>
-                                <input type="file" id="upload" class="account-file-input" hidden accept="image/png, image/jpeg" />
+                                <input type="file" id="upload" name="profile_picture" class="account-file-input" hidden accept="image/png, image/jpeg" />
                             </label>
                                 <button type="button" class="btn btn-outline-secondary account-image-reset mb-4">
                                 <i class="bx bx-reset d-block d-sm-none"></i>
@@ -32,11 +47,11 @@
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label for="firstName" class="form-label">نام</label>
-                                <input class="form-control" type="text" id="firstName" name="first_name" value="{{ user.first_name }}" autofocus />
+                                <input required class="form-control" type="text" id="firstName" name="first_name" value="{{ user.first_name }}" autofocus />
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label for="lastName" class="form-label">نام خانوادگی</label>
-                                <input class="form-control" type="text" name="last_name" id="lastName" value="{{ last_name }}" />
+                                <input required class="form-control" type="text" name="last_name" id="lastName" value="{{ user.last_name }}" />
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label class="form-label" for="phoneNumber">شماره تلفن</label>
@@ -44,7 +59,7 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label for="address" class="form-label">آدرس</label>
-                                <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+                                <textarea class="form-control" id="address" name="address" rows="3">{{ user.address }}</textarea>
                             </div>
                         </div>
                         <div class="mt-2">
@@ -54,15 +69,33 @@
                 </div>
                 <hr class="my-0">
                 <div class="card-body">
-                    <form id="" method="POST" action="#">
+                    <form id="" method="POST" action="{% url 'main:change_password' %}">
                         {% csrf_token %}
                         <div class="row">
-                            <div class="mb-3 col-md-6 form-password-toggle">
+                            <div class="mb-3 form-password-toggle">
                                 <div class="d-flex justify-content-between">
-                                    <label class="form-label" for="password">رمز عبور جدید</label>
+                                    <label class="form-label" for="old_password">رمز عبور قبلی</label>
                                 </div>
                                 <div class="input-group input-group-merge">
-                                    <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                                    <input required type="password" id="old_password" class="form-control" name="old_password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6 form-password-toggle">
+                                <div class="d-flex justify-content-between">
+                                    <label class="form-label" for="new_password1">رمز عبور جدید</label>
+                                </div>
+                                <div class="input-group input-group-merge">
+                                    <input required type="password" id="new_password1" class="form-control" name="new_password1" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6 form-password-toggle">
+                                <div class="d-flex justify-content-between">
+                                    <label class="form-label" for="new_password2">تکرار رمز عبور جدید</label>
+                                </div>
+                                <div class="input-group input-group-merge">
+                                    <input required type="password" id="new_password2" class="form-control" name="new_password2" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                                 </div>
                             </div>

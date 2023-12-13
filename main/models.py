@@ -60,4 +60,4 @@ class File(models.Model):
 
 class BankInfo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+    sheba = models.CharField(max_length=100)

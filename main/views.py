@@ -1,8 +1,9 @@
-from django.shortcuts import HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect, redirect
 
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, UpdateView
 
-from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import logout as auth_logout, update_session_auth_hash
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -11,7 +12,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 
 from main.forms import SignUpForm
-from main.models import File
+from main.models import BankInfo, File, User
 
 
 class LogInView(LoginView):
@@ -47,13 +48,26 @@ class SignUpView(CreateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class ProfileView(LoginRequiredMixin, TemplateView):
+class ProfileView(LoginRequiredMixin, UpdateView):
     login_url = '/login/'
     redirect_field_name = 'next'
 
+    model = User
+    fields = ['first_name', 'last_name', 'address', 'profile_picture']
+
     template_name = 'main/profile.html'
     
-
+    def get_success_url(self):
+        return reverse_lazy('main:profile') 
+    
+    def get_object(self, queryset=None):
+        return self.request.user
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'تغییرات با موفقیت ثبت شد!')
+        return super().form_valid(form)
+    
+    
 class SignedView(TemplateView):
     template_name = 'main/thankyou.html'
 
@@ -79,3 +93,34 @@ class FilesView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         messages.success(self.request, 'فایل با موفقیت ارسال شد!')
         return super().form_valid(form)
+
+
+class BankInfoView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'next'
+
+    model = BankInfo
+    fields = ['sheba', ]
+    
+    template_name = 'main/bankinfo.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('main:bankinfo') 
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, 'اطلاعات با موفقیت ثبت شد!')
+        return super().form_valid(form)
+
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'رمز ورود به روز رسانی شد!')
+        else:
+            messages.error(request, 'تغییر رمز دچار مشکل شد، لطفا مجدد تلاش کنید!')
+
+    return redirect('main:profile')
