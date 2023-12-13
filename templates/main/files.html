@@ -48,7 +48,7 @@
                             {% for file in user.file_set.all %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td><a href="{{ file.file.url }}"><span class="badge bg-label-primary me-1">برای دانلود کلیک کنید</span></a></td>
+                                <td><a href="{{ file.file.url }}" download><span class="badge bg-label-primary me-1">برای دانلود کلیک کنید</span></a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
