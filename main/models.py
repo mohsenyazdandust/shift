@@ -1,5 +1,5 @@
 from django.db import models
-
+from django_jalali.db import models as jmodels
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
@@ -17,7 +17,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
         extra_fields.setdefault('is_confirmed', True)
-        
+
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
@@ -28,26 +28,26 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     username = None
     phone_number = models.CharField(max_length=13, blank=True, unique=True)
-    
+
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     address = models.TextField(blank=True, null=True)
-    
+
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
-    
+
     profile_picture = models.ImageField(upload_to='users/profiles/', default='users/default_profile.png')
     id_card = models.ImageField(upload_to='users/profiles/')
     degree = models.ImageField(upload_to='users/degrees/')
     auth = models.ImageField(upload_to='users/auths/')
-    
+
     is_confirmed = models.BooleanField(default=False)
-    
+
     objects = UserManager()
-    
+
     def get_full_name(self):
         return '{} {}'.format(self.first_name, self.last_name)
-    
+
 
 class File(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -66,3 +66,22 @@ class BankInfo(models.Model):
 class Code(models.Model):
     code = models.CharField(max_length=4)
     phone_number = models.CharField(max_length=11)
+
+
+class Shift(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = jmodels.jDateField()
+    string_date = models.CharField(max_length=11)
+    sobh = models.BooleanField(null=True, default=False)
+    asr = models.BooleanField(null=True, default=False)
+    shab = models.BooleanField(null=True, default=False)
+
+
+class ControlShift(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    month = models.IntegerField()
+    year = models.IntegerField()
+    user_change_time = models.IntegerField(default=0)
+    limit = models.IntegerField(default=3)
+
+
