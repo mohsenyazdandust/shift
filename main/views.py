@@ -155,34 +155,54 @@ def send_code(request):
 
 @csrf_exempt
 def next_month_shift_view(request):
+    month = jdatetime.date.today().month
+    if month < 12:
+        next_month = month + 1
+    else:
+        next_month = 1
+    control_over_shifts = ControlShift.objects.get(user=request.user, year=jdatetime.date.today().year,
+                                                   month=next_month)
     if request.method == "GET":
-        month = jdatetime.date.today().month
         shifts = Shift.objects.filter(user=request.user)
         list_of_shifts = []
 
-        if month < 12:
-            next_month = month + 1
-        else:
-            next_month = 1
-        query = shifts.filter(date__exact=jdatetime.date(jdatetime.date.today().year , next_month , 1))
+        query = shifts.filter(date__exact=jdatetime.date(jdatetime.date.today().year, next_month, 1))
         if query:
             print(request.user)
-            list_of_shifts = shifts.filter(string_date__startswith=str(str(jdatetime.date.today().year)+"/"+str(next_month)))
+            list_of_shifts = shifts.filter(
+                string_date__startswith=str(str(jdatetime.date.today().year) + "-" + str(next_month)))
 
         else:
-            date = jdatetime.date(jdatetime.date.today().year , next_month  ,1 )
-            while date.month < next_month+1:
-                shift_record = Shift.objects.create(date=date, user=request.user , string_date=date.strftime("%Y/%m/%d"))
+            date = jdatetime.date(jdatetime.date.today().year, next_month, 1)
+            while date.month < next_month + 1:
+                shift_record = Shift.objects.create(date=date, user=request.user, string_date=date.strftime("%Y-%m-%d"))
                 shift_record.save()
                 list_of_shifts.append(shift_record)
                 date += jdatetime.timedelta(days=1)
         print(list_of_shifts)
-        control_over_shifts = ControlShift.objects.get(user = request.user , year=jdatetime.date.today().year , month = next_month )
-        if not control_over_shifts :
+        if not control_over_shifts:
             ControlShift.objects.create(user=request.user, year=jdatetime.date.today().year, month=next_month)
-        return render(request, 'main/tables-basic-Copy.html', {'current_month': month , 'list_of_shifts' : list_of_shifts , 'control' : control_over_shifts})
-    else :
-        print(request.body)
-        table_data = json.loads(request.POST.get("table_data"))
-        print(table_data)
-        return JsonResponse({"s":"salam"})
+        return render(request, 'main/tables-basic-Copy.html',
+                      {'current_month': month, 'list_of_shifts': list_of_shifts, 'control': control_over_shifts})
+    else:
+        shift_dict = request.POST
+        keys_iterator = iter(shift_dict.keys())
+        # Skip the first key
+        next(keys_iterator)
+
+        # Iterate over the remaining keys
+        for key in keys_iterator:
+
+            shift_record = Shift.objects.get(user=request.user, string_date=key[:10])
+            shift_time = key[-3:]
+            if shift_time == 'sbh':
+                shift_record.sobh = True
+            elif shift_time == 'asr':
+                shift_record.asr = True
+            else:
+                shift_record.shab = True
+            shift_record.save()
+        control_over_shifts.user_change_time += 1
+        control_over_shifts.save()
+
+        return redirect('main:nms')

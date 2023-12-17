@@ -7,9 +7,10 @@
         <div> ماه کنونی : <span> {{ current_month }} </span></div>
         <div> تعداد تغییر داده شده : <span> {{ control.user_change_time }} </span></div>
         <div> تعداد تغییر مجاز : <span> {{ control.limit }} </span></div>
-        {% if  control.user_change_time  <  control.limit %}
+        {% if  control.user_change_time  == 0 %}
             <div class="table-responsive text-nowrap">
-                <form method="post" name="form-table-shift">
+                <form method="post" name="form-table-shift" action="{% url 'main:nms' %}">
+                    {% csrf_token %}
                     <table id="table-shift" class="table table-bordered">
                         <thead>
                         <tr>
@@ -25,16 +26,16 @@
                                 <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ i.date }}</strong>
                                 </td>
                                 <td>{% if i.sobh %}
-                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-sobh"
+                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-sbh"
                                            checked> {% else %}
-                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-sobh">{% endif %}
+                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-sbh">{% endif %}
                                 </td>
                                 <td>{% if i.asr %}<input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-asr"
                                                          checked> {% else %}
                                     <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-asr">{% endif %}
                                 </td>
                                 <td>{% if i.shab %}
-                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-shab"
+                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-shb"
                                            checked> {% else %}
                                     <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-shab">{% endif %}
                                 </td>
@@ -43,14 +44,14 @@
                         </tbody>
 
                     </table>
-                    <button class="btn-primary" id="submitBtn">ارسال برای مدیر</button>
+                    <button type="submit" class="btn-primary" id="submitBtn">ارسال برای مدیر</button>
                 </form>
 
             </div>
             </div>
         {% else %}
             <div class="table-responsive text-nowrap">
-                <table class="table table-bordered">
+                <table id="table-shift" class="table table-bordered">
                     <thead>
                     <tr>
                         <th>تاریخ</th>
@@ -62,76 +63,58 @@
                     <tbody>
                     {% for i in list_of_shifts %}
                         <tr>
-                            <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ i.date }}</strong></td>
-                            <td>{{ i.sobh }} 2</td>
-                            <td>{{ i.asr }} 2</td>
-                            <td>{{ i.shab }} 2</td>
-
-
+                            <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ i.date }}</strong>
+                            </td>
+                            <td>{% if i.sobh %}
+                                <img src="{% get_static_prefix %}img/tick.png" alt="Icon">
+                            {% else %}
+                                <img src="{% get_static_prefix %}img/cross.svg" alt="Icon">{% endif %}
+                            </td>
+                            <td>{% if i.asr %}
+                                <img src="{% get_static_prefix %}img/tick.png" alt="Icon">
+                            {% else %}
+                                <img src="{% get_static_prefix %}img/cross.svg" alt="Icon">{% endif %}
+                            </td>
+                            <td>{% if i.shab %}
+                                <img src="{% get_static_prefix %}img/tick.png" alt="Icon">
+                            {% else %}
+                                <img src="{% get_static_prefix %}img/cross.svg" alt="Icon">{% endif %}
+                            </td>
                         </tr>
-
                     {% endfor %}
                     </tbody>
 
+                {% if control.user_change_time < control.limit %}
                 </table>
-            </div>
+
+                <div class="h4"><h4>درخواست تغییر شیفت </h4></div>
+                <form method="post" action="/edit_shift">
+                    <table id="table-shift" class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>تاریخ</th>
+                            <th>شیفت صبح</th>
+                            <th>شیفت عصر</th>
+                            <th>شیفت شب</th>
+                        </tr>
+                        </thead>
+                        <tr>
+                            <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong><input type="text"
+                                                                                                     name="edit-date"></strong>
+                            </td>
+                            <td>
+                                <input class="bigger_checkBox" type="checkbox" name="sbh">
+                            </td>
+                            <td><input class="bigger_checkBox" type="checkbox" name="asr">
+                            </td>
+                            <td><input class="bigger_checkBox" type="checkbox" name="shb">
+                            </td>
+                            <td><input class="btn-primary" type="submit" name="edit-submit" value="بازنگری">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+                    {%  endif %}
             </div>
         {% endif %}
-
-        {#  $(document).ready(function() {#}
-        {#    $("#submitBtn").click(function() {#}
-        {#      var myList = [1, 2, 3, 4, 5]; // Example list#}
-        {##}
-        {#      $.ajax({#}
-        {#        url: "/shift/",#}
-        {#        type: "POST",#}
-        {#        data: JSON.stringify(myList),#}
-        {#        contentType: "application/json",#}
-        {#        success: function(response) {#}
-        {#          console.log("List sent successfully.");#}
-        {#        },#}
-        {#        error: function(xhr) {#}
-        {#          console.error("Error sending list.");#}
-        {#        }#}
-        {#      });#}
-        {#    });#}
-        {#  });#}
-        {#</script>#}
-
-  <script src="{% static 'js/jquery1.js' %}"></script>
-        <script>
-            $(document).ready(function () {
-                console.log("Saaaaaaaaaaaaaaaaa")
-            $("#submitBtn").click(function () {
-                var tableData = [];
-                $("#table-shift tbody tr").each(function (row, tr) {
-                    var rowData = {
-                        date: $(tr).find("td:eq(0)").text(),
-                        sobh: $(tr).find("td:eq(1)").text(),
-                        asr: $(tr).find("td:eq(2)").text(),
-                        shab: $(tr).find("td:eq(3)").text(),
-                        user: {{request.user}}
-                    };
-                    tableData.push(rowData);
-                });
-                console.log("salam man injam")
-                console.log(tableData)
-                $.ajax({
-                    url: "/shift/",
-                    type: "POST",
-                    data: {table_data: JSON.stringify(tableData)},
-                    dataType: "json",
-                    success: function (response) {
-                        console.log(response)
-                        console.log(tableData)
-                        // Handle success response
-                    },
-                    error: function (xhr) {
-                        console.log(tableData)
-                        // Handle error response
-                    }
-                });
-            });
-        });
-    </script>
 {% endblock Content %}
