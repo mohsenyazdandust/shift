@@ -216,11 +216,11 @@ def request_edit(request):
         edit = RequestEdit.objects.create(user=request.user, date=date_obj, string_date=date_obj.strftime("%Y-%m-%d"))
         for key in request.POST.keys():
             if key == 'sobh':
-                edit.sobh = True
+                edit.new_sobh = True
             elif key == 'asr':
-                edit.asr = True
+                edit.new_asr = True
             elif key == 'shab':
-                edit.shab = True
+                edit.new_shab = True
         edit.save()
         controller = ControlShift.objects.filter(user=request.user, year=date_obj.year, month=date_obj.month).first()
         controller.user_change_time += 1
@@ -231,7 +231,10 @@ def request_edit(request):
 @csrf_exempt
 def current_month_shift_view(request):
     print("sds")
+    # month = 12
     month = jdatetime.date.today().month
+    day = jdatetime.date.today().day
+    # day = 2
 
     control_over_shifts = ControlShift.objects.filter(user=request.user, year=jdatetime.date.today().year,
                                                       month=month)
@@ -245,7 +248,7 @@ def current_month_shift_view(request):
         list_of_shifts = []
 
         query = shifts.filter(
-            date__exact=jdatetime.date(jdatetime.date.today().year, month , jdatetime.date.today().day ))
+            date__exact=jdatetime.date(jdatetime.date.today().year, month , day))
         if query.count() != 0:
             print(request.user)
             month_string = str('0'+str(month)) if month < 10 else str(month)
@@ -253,7 +256,7 @@ def current_month_shift_view(request):
                 string_date__startswith=str(str(jdatetime.date.today().year) + "-" + month_string))
 
         else:
-            date = jdatetime.date(jdatetime.date.today().year, month, jdatetime.date.today().day)
+            date = jdatetime.date(jdatetime.date.today().year, month, day)
             while date.month < month + 1:
                 shift_record = Shift.objects.create(date=date, user=request.user, string_date=date.strftime("%Y-%m-%d"))
                 shift_record.save()
@@ -284,3 +287,5 @@ def current_month_shift_view(request):
         control_over_shifts.save()
 
         return redirect('main:cms')
+def shift_portal(request):
+    return render(request,'main/shift_portal.html')

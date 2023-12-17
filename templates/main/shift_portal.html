@@ -1,0 +1,20 @@
+{% extends "base/layout.html" %}
+
+{% load static %}
+
+{% block Content %}
+    <div class="card-body">
+        <div>
+            <h3>  انتخاب کنید </h3>
+            <button type="button" onclick="redirectToURL({% url 'main:cms' %})" class="btn btn-xl btn-primary month-button">ماه جاری</button>
+            <button type="button" onclick="redirectToURL({% url 'main:nms' %})" class="btn btn-xl btn-primary month-button">ماه آینده</button>
+
+        </div>
+    </div>
+     <script>
+           function redirectToURL(url) {
+            // Replace 'your_destination_url' with the actual URL you want to redirect to
+            window.location.href =url;
+        }
+    </script>
+{% endblock Content %}
