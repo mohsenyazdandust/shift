@@ -12,7 +12,8 @@ urlpatterns = [
     path('bankinfo/', BankInfoView.as_view(), name="bankinfo"),
     path('password/', change_password, name="change_password"),
     path('sendcode/', send_code, name="sendcode"),
-    path('shift/', next_month_shift_view, name="nms"),
+    path('next_month_shift/', next_month_shift_view, name="nms"),
+    path('current_month_shift/', current_month_shift_view, name="cms"),
     path('reqedit/', request_edit, name="request_edit"),
     path('', ProfileView.as_view(), name="profile"),
 ]

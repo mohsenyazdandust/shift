@@ -158,7 +158,7 @@ def next_month_shift_view(request):
     else:
         next_month = 1
     control_over_shifts = ControlShift.objects.filter(user=request.user, year=jdatetime.date.today().year,
-                                                   month=next_month)
+                                                      month=next_month)
     if control_over_shifts.count() == 0:
         control_over_shifts = ControlShift.objects.create(user=request.user, year=jdatetime.date.today().year,
                                                           month=next_month)
@@ -183,7 +183,7 @@ def next_month_shift_view(request):
                 date += jdatetime.timedelta(days=1)
         print(list_of_shifts)
 
-        return render(request, 'main/tables-basic-Copy.html',
+        return render(request, 'main/next_month_shift.html',
                       {'current_month': month, 'list_of_shifts': list_of_shifts, 'control': control_over_shifts})
     else:
         shift_dict = request.POST
@@ -226,3 +226,61 @@ def request_edit(request):
         controller.user_change_time += 1
         controller.save()
         return redirect('main:nms')
+
+
+@csrf_exempt
+def current_month_shift_view(request):
+    print("sds")
+    month = jdatetime.date.today().month
+
+    control_over_shifts = ControlShift.objects.filter(user=request.user, year=jdatetime.date.today().year,
+                                                      month=month)
+    if control_over_shifts.count() == 0:
+        control_over_shifts = ControlShift.objects.create(user=request.user, year=jdatetime.date.today().year,
+                                                          month=month)
+    else:
+        control_over_shifts = control_over_shifts.first()
+    if request.method == "GET":
+        shifts = Shift.objects.filter(user=request.user)
+        list_of_shifts = []
+
+        query = shifts.filter(
+            date__exact=jdatetime.date(jdatetime.date.today().year, month , jdatetime.date.today().day ))
+        if query.count() != 0:
+            print(request.user)
+            month_string = str('0'+str(month)) if month < 10 else str(month)
+            list_of_shifts = shifts.filter(
+                string_date__startswith=str(str(jdatetime.date.today().year) + "-" + month_string))
+
+        else:
+            date = jdatetime.date(jdatetime.date.today().year, month, jdatetime.date.today().day)
+            while date.month < month + 1:
+                shift_record = Shift.objects.create(date=date, user=request.user, string_date=date.strftime("%Y-%m-%d"))
+                shift_record.save()
+                list_of_shifts.append(shift_record)
+                date += jdatetime.timedelta(days=1)
+        print(list_of_shifts)
+
+        return render(request, 'main/current_month_shift.html',
+                      {'current_month': month, 'list_of_shifts': list_of_shifts, 'control': control_over_shifts})
+    else:
+        shift_dict = request.POST
+        keys_iterator = iter(shift_dict.keys())
+        # Skip the first key
+        next(keys_iterator)
+
+        # Iterate over the remaining keys
+        for key in keys_iterator:
+            shift_record = Shift.objects.get(user=request.user, string_date=key[:10])
+            shift_time = key[-3:]
+            if shift_time == 'sbh':
+                shift_record.sobh = True
+            elif shift_time == 'asr':
+                shift_record.asr = True
+            else:
+                shift_record.shab = True
+            shift_record.save()
+        control_over_shifts.user_change_time += 1
+        control_over_shifts.save()
+
+        return redirect('main:cms')
