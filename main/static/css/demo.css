@@ -218,3 +218,8 @@ a.f-ir i {
 .mr-auto {
     margin-right: auto;
 }
+
+.info-div{
+    display: inline;
+    margin-inline: 5px;
+}

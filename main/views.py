@@ -1,20 +1,17 @@
-import datetime
-import json
-
 import jdatetime
 from django.contrib import messages
 from django.contrib.auth import logout as auth_logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect, redirect, render
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, TemplateView, UpdateView
 
 from main.forms import SignUpForm
-from main.models import BankInfo, Code, File, User, Shift, ControlShift
+from main.models import BankInfo, Code, File, User, Shift, ControlShift, RequestEdit
 
 
 class LogInView(LoginView):
@@ -160,8 +157,13 @@ def next_month_shift_view(request):
         next_month = month + 1
     else:
         next_month = 1
-    control_over_shifts = ControlShift.objects.get(user=request.user, year=jdatetime.date.today().year,
+    control_over_shifts = ControlShift.objects.filter(user=request.user, year=jdatetime.date.today().year,
                                                    month=next_month)
+    if control_over_shifts.count() == 0:
+        control_over_shifts = ControlShift.objects.create(user=request.user, year=jdatetime.date.today().year,
+                                                          month=next_month)
+    else:
+        control_over_shifts = control_over_shifts.first()
     if request.method == "GET":
         shifts = Shift.objects.filter(user=request.user)
         list_of_shifts = []
@@ -180,8 +182,7 @@ def next_month_shift_view(request):
                 list_of_shifts.append(shift_record)
                 date += jdatetime.timedelta(days=1)
         print(list_of_shifts)
-        if not control_over_shifts:
-            ControlShift.objects.create(user=request.user, year=jdatetime.date.today().year, month=next_month)
+
         return render(request, 'main/tables-basic-Copy.html',
                       {'current_month': month, 'list_of_shifts': list_of_shifts, 'control': control_over_shifts})
     else:
@@ -205,4 +206,23 @@ def next_month_shift_view(request):
         control_over_shifts.user_change_time += 1
         control_over_shifts.save()
 
+        return redirect('main:nms')
+
+
+def request_edit(request):
+    if request.method == 'POST':
+        date = dict(request.POST)['edit-date'][0]
+        date_obj = jdatetime.datetime.strptime(str(date).strip(), "%Y-%m-%d").date()
+        edit = RequestEdit.objects.create(user=request.user, date=date_obj, string_date=date_obj.strftime("%Y-%m-%d"))
+        for key in request.POST.keys():
+            if key == 'sobh':
+                edit.sobh = True
+            elif key == 'asr':
+                edit.asr = True
+            elif key == 'shab':
+                edit.shab = True
+        edit.save()
+        controller = ControlShift.objects.filter(user=request.user, year=date_obj.year, month=date_obj.month).first()
+        controller.user_change_time += 1
+        controller.save()
         return redirect('main:nms')

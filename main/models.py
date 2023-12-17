@@ -1,6 +1,6 @@
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django_jalali.db import models as jmodels
-from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 class UserManager(BaseUserManager):
@@ -77,11 +77,20 @@ class Shift(models.Model):
     shab = models.BooleanField(null=True, default=False)
 
 
+class RequestEdit(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = jmodels.jDateField()
+    string_date = models.CharField(max_length=11)
+    new_sobh = models.BooleanField(null=True, default=False)
+    new_asr = models.BooleanField(null=True, default=False)
+    new_shab = models.BooleanField(null=True, default=False)
+    is_approved = models.BooleanField(default=False)
+    request_date = jmodels.jDateField(auto_now=True)
+
+
 class ControlShift(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    month = models.IntegerField()
     year = models.IntegerField()
+    month = models.IntegerField()
     user_change_time = models.IntegerField(default=0)
     limit = models.IntegerField(default=3)
-
-

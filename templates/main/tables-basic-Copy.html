@@ -4,9 +4,11 @@
 
 {% block Content %}
     <div class="card-body">
-        <div> ماه کنونی : <span> {{ current_month }} </span></div>
-        <div> تعداد تغییر داده شده : <span> {{ control.user_change_time }} </span></div>
-        <div> تعداد تغییر مجاز : <span> {{ control.limit }} </span></div>
+        <div>
+            <div class="info-div"> تعداد تغییر داده شده : <span> {{ control.user_change_time }} </span></div>
+            <div class="info-div"> تعداد تغییر مجاز : <span> {{ control.limit }} </span></div>
+            <div class="info-div"> <span> در حالت عادی تنها برای 3 روز در  هر ماه مجاز به درخواست تغییر شیفت هستید   </span> </div>
+        </div>
         {% if  control.user_change_time  == 0 %}
             <div class="table-responsive text-nowrap">
                 <form method="post" name="form-table-shift" action="{% url 'main:nms' %}">
@@ -84,11 +86,12 @@
                     {% endfor %}
                     </tbody>
 
-                {% if control.user_change_time < control.limit %}
                 </table>
 
-                <div class="h4"><h4>درخواست تغییر شیفت </h4></div>
-                <form method="post" action="/edit_shift">
+                {% if control.user_change_time < control.limit %}
+                <div class="h4"><h4>درخواست تغییر شیفت </h4><h5>(به تعداد دفعات مجاز قادر به انجام این عمل هستید)</h5></div>
+                <form method="post" action="{% url 'main:request_edit' %}">
+                {% csrf_token %}
                     <table id="table-shift" class="table table-bordered">
                         <thead>
                         <tr>
