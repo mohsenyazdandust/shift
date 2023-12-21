@@ -6,53 +6,9 @@
     <div class="card-body">
         <div>
                <h3> شیفت های ماه جاری  </h3>
-            <div class="info-div"> تعداد تغییر داده شده : <span> {{ control.user_change_time }} </span></div>
-            <div class="info-div"> تعداد تغییر مجاز : <span> {{ control.limit }} </span></div>
-            <div class="info-div"> <span> در حالت عادی تنها برای 3 روز در  هر ماه مجاز به درخواست تغییر شیفت هستید   </span> </div>
         </div>
-        {% if  control.user_change_time  == 0 %}
-            <div class="table-responsive text-nowrap">
-                <form method="post" name="form-table-shift" action="{% url 'main:cms' %}">
-                    {% csrf_token %}
-                    <table id="table-shift" class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>تاریخ</th>
-                            <th>شیفت صبح</th>
-                            <th>شیفت عصر</th>
-                            <th>شیفت شب</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for i in list_of_shifts %}
-                            <tr>
-                                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ i.date }}</strong>
-                                </td>
-                                <td>{% if i.sobh %}
-                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-sbh"
-                                           checked> {% else %}
-                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-sbh">{% endif %}
-                                </td>
-                                <td>{% if i.asr %}<input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-asr"
-                                                         checked> {% else %}
-                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-asr">{% endif %}
-                                </td>
-                                <td>{% if i.shab %}
-                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-shb"
-                                           checked> {% else %}
-                                    <input class="bigger_checkBox" type="checkbox" name="{{ i.date }}-shab">{% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
 
-                    </table>
-                    <button type="submit" style="float: left" class="btn rounded-pill btn-info" id="submitBtn">ارسال برای مدیر</button>
-                </form>
 
-            </div>
-            </div>
-        {% else %}
             <div class="table-responsive text-nowrap">
                 <table id="table-shift" class="table table-bordered">
                     <thead>
@@ -89,40 +45,6 @@
 
                 </table>
 
-                {% if control.user_change_time < control.limit %}
-                <div class="h4"><h4>درخواست تغییر شیفت </h4><h5>(به تعداد دفعات مجاز قادر به انجام این عمل هستید)</h5></div>
-                <form method="post" action="{% url 'main:request_edit' %}">
-                {% csrf_token %}
-                    <table id="table-shift" class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>تاریخ</th>
-                            <th>شیفت صبح</th>
-                            <th>شیفت عصر</th>
-                            <th>شیفت شب</th>
-                        </tr>
-                        </thead>
-                        <tr>
-                                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>
-                                <select name="edit-date" id="edit-shift-select" class="form-select">
-                                 {% for i in list_of_shifts %}
-                                            <option value={{ i.date }}>{{ i.date }}</option>
-                                {% endfor %}
-                                        </select></strong>
-                            </td>
-                            <td>
-                                <input class="bigger_checkBox" type="checkbox" name="sbh">
-                            </td>
-                            <td><input class="bigger_checkBox" type="checkbox" name="asr">
-                            </td>
-                            <td><input class="bigger_checkBox" type="checkbox" name="shb">
-                            </td>
-                            <td><input class="btn-primary" type="submit" name="edit-submit" value="بازنگری">
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-                    {%  endif %}
             </div>
-        {% endif %}
+    </div>
 {% endblock Content %}
